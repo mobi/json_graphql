@@ -1,6 +1,6 @@
 module JsonToGraphql
   class Parser
-    attr_accessor :input_hash, :output_string, :root
+    attr_accessor :input_hash, :root
     SPACES_PER_TAB = 2;
 
     def initialize(input_hash)
@@ -22,7 +22,9 @@ module JsonToGraphql
     end
 
     def print
-      "{\n#{root.print(output_string, 1)}}"
+      root.children.each_with_object("{\n") do |child, query|
+        query.concat("#{child.print("", 1)}")
+      end.concat("}")
     end
 
     class Node
@@ -34,22 +36,28 @@ module JsonToGraphql
         @children = []
         @attrs = attrs || []
         @args = args || {}
+        @variables = {}
       end
 
-      def print(output_string, level)
+      def print(string, level)
         indentation = " " * (level * SPACES_PER_TAB)
         next_level_indentation = " " * ((level.succ) * SPACES_PER_TAB)
-        output_string.concat(indentation, "#{name}", argument_string, "{\n")
-        attrs.each { |attr| output_string.concat(next_level_indentation, "#{attr}\n") }
-        children.each { |child| child.print(output_string, level.succ) }
-        output_string.concat(indentation, "}\n")
+        string.concat(indentation, "#{name}", arg_var_string, "{\n")
+        attrs.each { |attr| string.concat(next_level_indentation, "#{attr}\n") }
+        children.each { |child| child.print(string, level.succ) }
+        string.concat(indentation, "}\n")
       end
 
       private
 
-      def argument_string
-        return ' ' if args.empty?
-        '(' + args.map{|k,v| "#{k}: #{v}"}.join(',') + ') '
+      def arg_var_string
+        if !args.empty?
+          '(' + args.map{|k,v| "#{k}: #{v}"}.join(',') + ') '
+        elsif !variables.empty?
+          '(' + variables.map{|k,v| "$#{k}: #{v}"}.join(',') + ') '
+        else
+          "" 
+        end
       end
     end
   end
