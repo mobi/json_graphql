@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary       = "This gem converts JSON objects to GraphQL queries."
   spec.description   = "This is an even longer description of how this gem converts
                         JSON to GraphQL queries."
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "https://www.google.com"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -38,4 +38,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest", "~> 5.0"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "pry-stack_explorer"
+  spec.add_development_dependency "pry-byebug"
 end
