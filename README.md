@@ -18,10 +18,10 @@ Or install it yourself as:
 
 ## Usage
 
-The gem basically handles the conversion through the method `parse` defined in the `JsonToGraphql` module that gets passed a json in the following format.
+This gem accepts a JSON object of a particular format and returns a valid GraphQL query.
 
 ```ruby
-    {
+    json_query = {
       "query" => {
         "_variables" => {
           "x" => 1, "y" => 2
@@ -30,12 +30,12 @@ The gem basically handles the conversion through the method `parse` defined in t
           "_args" => {
             "id" => 123
           }, 
-          "_attrs" => [:name,:address], 
+          "_attrs" => [:name, :address], 
           "books" => {
             "_args" => {
               "price" => 40
             }, 
-            "_attrs" => [:price,:name, :author]
+            "_attrs" => [:price, :name, :author]
           }, 
           "employees" => {
             "_args" => {
@@ -45,19 +45,15 @@ The gem basically handles the conversion through the method `parse` defined in t
           }
         }
       }
-    }
-```
+    }.to_json
 
-Assuming this is stored in a variable called `json_query` in `JSON` format then
-
-```ruby
 JsonToGraphql.parse(json_query)
 ```
-should output
+should yield
 
 ```graphql
   {
-    query($x: 1,$y: 2) {
+    query($x: 1, $y: 2) {
       libraries(id: 123) {
         name
         address
@@ -80,11 +76,11 @@ Here each key/node can have one of 4 options:
 
 1 - **Variables**: Using the key `_variables` which are local variables that you want to use later in the query, usually placed on the top key defining the entire query, in this case this key is `"query"`.
 
-2 - **Arguments**: Using the key `_args` which is another hash containing arguments passed to a node like in `devices(price: 40)`.
+2 - **Arguments**: Use the `_args` key to define the arguments to be passed to your GraphQL engine when fetching the relation.
 
-3 - **Attributes/Columns**: Using the key `_attrs` and the value in this case is an array representing the attributes or columns requested to included in the response.
+3 - **Attributes/Columns**: Use the `_attrs` key to define the fields that should be returned.
 
-4 - **New key**: Usually resembling a nested object to be included that is also expected to have arguments and attributes.
+4 - **New key**: Specify new keys to define additional relations that should be returned.
 
 ## Development
 
