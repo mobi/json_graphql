@@ -1,9 +1,5 @@
 # JsonToGraphql
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/json_to_graphql`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -22,7 +18,69 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+This gem accepts a JSON object of a particular format and returns a valid GraphQL query.
+
+```ruby
+    json_query = {
+      "query" => {
+        "_variables" => {
+          "x" => 1, "y" => 2
+        },
+        "libraries" => {
+          "_args" => {
+            "id" => 123
+          }, 
+          "_attrs" => [:name, :address], 
+          "books" => {
+            "_args" => {
+              "price" => 40
+            }, 
+            "_attrs" => [:price, :name, :author]
+          }, 
+          "employees" => {
+            "_args" => {
+                "department" => "history"
+            },
+            "_attrs" => [:name, :age, :department]
+          }
+        }
+      }
+    }.to_json
+
+JsonToGraphql.parse(json_query)
+```
+should yield
+
+```graphql
+  {
+    query($x: 1, $y: 2) {
+      libraries(id: 123) {
+        name
+        address
+        devices(price: 40) {
+          price
+          name
+          author
+        }
+        employees(department: history){
+          name
+          age
+          department
+        }
+      }
+    }
+  }
+```
+
+Here each key/node can have one of 4 options:
+
+1 - **Variables**: Using the key `_variables` which are local variables that you want to use later in the query, usually placed on the top key defining the entire query, in this case this key is `"query"`.
+
+2 - **Arguments**: Use the `_args` key to define the arguments to be passed to your GraphQL engine when fetching the relation.
+
+3 - **Attributes/Columns**: Use the `_attrs` key to define the fields that should be returned.
+
+4 - **New key**: Specify new keys to define additional relations that should be returned.
 
 ## Development
 
