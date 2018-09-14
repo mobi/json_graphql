@@ -47,7 +47,7 @@ This gem accepts a JSON object of a particular format and returns a valid GraphQ
       }
     }.to_json
 
-JsonToGraphql.parse(json_query)
+    JsonToGraphql.parse(json_query)
 ```
 should yield
 
