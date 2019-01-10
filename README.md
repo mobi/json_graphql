@@ -52,21 +52,19 @@ This gem accepts a JSON object of a particular format and returns a valid GraphQ
 should yield
 
 ```graphql
-  {
-    query($x: 1, $y: 2) {
-      libraries(id: 123) {
+  query($x: 1, $y: 2) {
+    libraries(id: 123) {
+      name
+      address
+      devices(price: 40) {
+        price
         name
-        address
-        devices(price: 40) {
-          price
-          name
-          author
-        }
-        employees(department: history){
-          name
-          age
-          department
-        }
+        author
+      }
+      employees(department: history){
+        name
+        age
+        department
       }
     }
   }

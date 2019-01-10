@@ -32,17 +32,15 @@ class JsonToGraphqlTest < Minitest::Test
 
   def output_query
     <<~QUERY.chomp
-      {
-        query($x: 1,$y: 2) {
-          lines(id: 123) {
+      query($x: 1,$y: 2) {
+        lines(id: 123) {
+          name
+          age
+          devices(price: 40) {
+            price
             name
-            age
-            devices(price: 40) {
-              price
-              name
-            }
-            people{
-            }
+          }
+          people{
           }
         }
       }
