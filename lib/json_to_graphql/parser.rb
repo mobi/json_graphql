@@ -22,9 +22,19 @@ module JsonToGraphql
     end
 
     def print
-      root.children.each_with_object("{\n") do |child, query|
-        query.concat("#{child.print("", 1)}")
-      end.concat("}")
+      if input_hash.key?('query')
+        start_string = ""
+        start_space = 0
+      else
+        start_string = "{\n"
+        start_space = 1
+      end
+
+      query = root.children.each_with_object(start_string) do |child, query|
+        query.concat("#{child.print("", start_space)}")
+      end
+      query.concat("}") unless input_hash.key?('query')
+      return query
     end
 
     class Node
@@ -56,7 +66,7 @@ module JsonToGraphql
         elsif !variables.empty?
           '(' + variables.map{|k,v| "$#{k}: #{v}"}.join(',') + ') '
         else
-          "" 
+          ""
         end
       end
     end
